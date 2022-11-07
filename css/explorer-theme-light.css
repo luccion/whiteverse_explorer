@@ -1,0 +1,207 @@
+body {
+  background: rgb(112 112 112);
+}
+.welogo {
+  filter: drop-shadow(2px 10px 20px #00000088);
+}
+.loading-div {
+  background-color: #ffffff;
+}
+.color-background-default {
+  background-color: #ffffff;
+}
+.form-control:focus {
+  background-color: #ffffff;
+}
+.color-background-default-alpha {
+  background-color: #ffffff94;
+}
+.color-background-important,
+.form-control,
+.custom-select {
+  background-color: #cdcdcd;
+}
+
+.color-font-default {
+  color: #000000;
+}
+.color-font-secondary {
+  color: #000000;
+}
+.color-leftCollapse-bg {
+  background: #767676;
+}
+.color-leftCollapse-bga {
+  background: #76767688;
+}
+.leftCollapse:hover {
+  background: #d5d5d5;
+  color: #1e1e1e;
+}
+.color-title-bg {
+  background: #b5b5b5;
+}
+.color-title-bga {
+  background: #b5b5b588;
+}
+.color-info-bg {
+  background: #c4c4c4;
+}
+.color-info-bga {
+  background: #ffffff88;
+}
+#showInfoPanel {
+  border: #000 solid;
+  border-width: 0px 1px 1px 0px;
+}
+#toolbar {
+  filter: none;
+  border: #000 solid;
+  border-width: 0px 1px 0px 0px;
+}
+#infoPanel,
+#metaDataContainer {
+  border: #000 1px solid;
+}
+/* JS添加的类 */
+.list-style {
+  background: #8d8d8de2;
+  color: rgb(0 0 0);
+  border: #000 1px solid;
+}
+.list-style:hover {
+  background: rgba(78, 78, 78, 0.418);
+  color: #fff;
+}
+
+.link-blue {
+  color: #1032c9;
+}
+.link-blue:hover {
+  color: #0062bd;
+}
+.link-green {
+  color: #22e99d;
+}
+.link-green:hover {
+  color: #02ffea;
+}
+.link-red {
+  color: #c41313;
+}
+.link-red:hover {
+  color: #f1591c;
+}
+#planet {
+  border-color: #4e4e4e;
+  background: #202020;
+}
+
+/* infoPanel 输入面板 */
+
+.form-control,
+.form-control:focus,
+.custom-select,
+.input-group-text,
+.card-info,
+.btn-accordion:hover,
+.btn-starmap:hover,
+.btn-starmap-reverse:hover {
+  color: #000000;
+  border: #000 1px solid;
+}
+.input-group-text {
+  background-color: #b1b1b1;
+}
+.card-info {
+  background-color: #34343400;
+}
+.btn-accordion:hover {
+  background: rgba(78, 78, 78, 0.418) !important;
+}
+
+/* 编辑后提示 */
+.editedInfo {
+  color: #000;
+}
+/* 自定义主题按钮 */
+.btn-starmap {
+  background-color: #d9d9d9;
+  border: #000 1px solid;
+}
+.btn-starmap:hover,
+.btn-starmap-reverse:hover {
+  background: #fff;
+}
+.btn-starmap-reverse {
+  background-color: #d9d9d9;
+  border: #000 1px solid;
+}
+
+.btn-starmap,
+.btn-starmap-reverse {
+  color: #000000;
+}
+
+/* 附加在输入框上的按钮 */
+.btn-pend:hover {
+  color: #000;
+  background-color: #dddddd;
+}
+/* 删除BUFF按钮 */
+.badge-buff:hover {
+  background-color: #971414;
+}
+
+.modal-content-starmap {
+  background: #ffffffad;
+  border: #000 1px solid;
+}
+
+/* 替换默认样式 */
+
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:window-inactive {
+  background: #d0d0d0cb;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: #00000000;
+}
+
+.toggle-switch {
+  background-color: rgb(231 231 231);
+  border: #000 1px solid;
+  /* filter: drop-shadow(2px 4px 6px #00000088); */
+}
+
+.toggle-switch:after,
+.toggle-switch:checked {
+  background-color: #ffffff;
+  filter: none;
+  border: #000 1px solid;
+}
+.toggle-switch:checked:after {
+  background-color: #000;
+}
+#scaleRange {
+  background-color: #ffffff;
+  filter: none;
+  border: #000 1px solid;
+}
+#scaleRange::-webkit-slider-thumb {
+  background: rgb(255, 255, 255);
+  border-color: rgb(0, 0, 0);
+}
+input[type='radio'] + label span {
+  background: #fff;
+  border: #000 1px outset;
+}
+input[type='radio']:checked + label span {
+  background: black;
+  border: white 5px solid;
+  box-shadow: black 0px 0px 0px 1px;
+}
+input[type='radio']:checked + label span::after {
+  background-color: aqua;
+}

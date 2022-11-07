@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Lunch" />
+    <meta name="description" content="漫步白宙" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Whiteverse: Explorer</title>
+    <link rel="shortcut icon" href="/favicon_we.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/explorer-mobile.css">
+    <link rel="stylesheet" href="css/explorer-theme-light.css">
+    <script type="text/javascript" src="scripts/explorer/initialize.js"></script>
+</head>
+
+<body>
+    <div class="loading-div" id="loading">
+        <div class="loading-content d-flex flex-column ">
+            <div class="mt-3 color-font-secondary"><i class="fa-solid fa-circle-notch fa-spin fa-3x"></i></div>
+        </div>
+    </div>
+    <div class="titleLogoContainer d-none" id="refreshLogo"></div>
+    <div class="blur d-none color-background-default-alpha color-font-secondary" id="metaDataContainer">
+        <i class="fa-solid fa-globe"></i>&nbsp;
+        <span id="currentPlanet"></span><br>
+        <i class="fa-solid fa-location-dot"></i>&nbsp;
+        <span id="currentCoordinate"></span>
+    </div>
+    <div class="blur shadow color-background-default" id="toolbar">
+        <div class="toolbar-btn-container">
+            <div data-toggle="tooltip" data-placement="right" title="展开信息栏" class="btn-secondary showInfoPanel mb-5"
+                id="showInfoPanel" disabled><i class="fa-solid fa-list"></i>
+            </div>
+            <button type="button" data-locale="User Name" data-toggle="tooltip" data-placement="right" title="刷新"
+                class="btn btn-starmap toolbar-btn" id="refresh"><i class="fa-solid fa-rotate"></i></button>
+            <button type="button" data-toggle="tooltip" data-placement="right" title="复位"
+                class="btn btn-starmap-reverse toolbar-btn mb-5" id="monotone"><i
+                    class="fa-solid fa-circle-half-stroke"></i></button>
+            <button type="button" data-toggle="tooltip" data-placement="right" title="星系"
+                class="btn btn-starmap-reverse toolbar-btn" id="showConstellation"><i
+                    class="fa-solid fa-border-none"></i></i></button>
+            <button type="button" data-toggle="tooltip" data-placement="right" title="星区"
+                class="btn btn-starmap toolbar-btn" id="showRegion"><i class="fa-solid fa-border-top-left"></i></button>
+            <button type="button" data-toggle="tooltip" data-placement="right" title="阵营"
+                class="btn btn-starmap-reverse toolbar-btn" id="showFaction"><i class="fa-solid fa-flag"></i></button>
+            <button type="button" data-toggle="tooltip" data-placement="right" title="星路"
+                class="btn btn-starmap toolbar-btn" id="showRoutes"><i class="fa-solid fa-vector-square"></i></button>
+            <button type="button" data-toggle="tooltip" data-placement="right" title="高亮编辑"
+                class="btn btn-starmap-reverse toolbar-btn" id="hlEdited"><i class="fa-solid fa-pencil"></i></button>
+            <button type="button" data-toggle="tooltip" data-placement="right" title="缺少图片的星球"
+                class="btn btn-starmap toolbar-btn" id="lackImg"><i class="fa-solid fa-circle-question"></i></button>
+        </div>
+        <div class="toolbar-btn-container mb-3">
+            <button type="button" data-toggle="tooltip" data-placement="right" title="生成混合渲染图"
+                class="btn btn-starmap-reverse toolbar-btn" id="renderImage"><i
+                    class="fa-solid fa-blender"></i></button>
+            <button type="button" data-toggle="tooltip" data-placement="right" title="下载星球CSV"
+                class="btn btn-secondary toolbar-btn" id="downloadStarCSV" downloadable="0" disabled><i
+                    class="fa-solid fa-file-export"></i></button>
+            <button type="button" data-toggle="tooltip" data-placement="right" title="还没用过的图片"
+                class="btn btn-starmap-reverse toolbar-btn" id="unusedImg"><i class="fa-solid fa-images"></i></button>
+
+        </div>
+        <div class="d-none" id="unusedImgPanel">
+            <ul class="list-group list-group-flush" id="unusedImgList">
+            </ul>
+        </div>
+    </div>
+    <nav class="navbar search-bar navbar-expand-lg color-background-important">
+        <button type="button" title="menu" class="d-lg-none btn btn-starmap-reverse" id="menu" data-toggle="collapse"
+            data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false"
+            aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+        </button>
+        <button type="button" title="虫洞" class="btn btn-starmap-reverse" id="shuffle"><i
+                class="fa-solid fa-shuffle"></i></button>
+        <form class="form-inlin d-inline-flex flex-nowrap search-container">
+            <input type="text" class="form-control mb-0 mr-1" id="search" placeholder="输入星球名称以">
+            <button type="button" title="飞！" class="btn btn-starmap" id="goToPlace"><i
+                    class="fa-solid fa-rocket"></i></button>
+        </form>
+        <div class="collapse navbar-collapse mt-3 mt-lg-0" id="navbarContent">
+            <button type="button" class="btn btn-starmap toolbar-btn" id="log" data-toggle="modal"
+                data-target="#logModal" title="更新记录"><i class="fa-solid fa-code"></i></button>
+            <button type="button" class="btn btn-starmap-reverse toolbar-btn" id="feedback" title="反馈"><i
+                    class="fa-regular fa-comment"></i></button>
+            <button type="button" data-toggle="modal" data-target="#settings" title="设置"
+                class="btn btn-starmap toolbar-btn"><i class="fa-solid fa-gear"></i></button>
+            <button type="button" data-toggle="modal" data-target="#userLogin" title="用户"
+                class="btn btn-starmap-reverse toolbar-btn"><i class="fa-solid fa-user"></i></button>
+        </div>
+    </nav>
+    <div class="shadow" id="infoPanel">
+        <div class="info d-flex flex-column color-info-bga" id="planetInfo" starid="" hasbuff="">
+            <div class="d-flex flex-column mb-3">
+                <div class="d-flex flex-column align-items-center color-font-default">
+                    <label for="planet"><span id="planetID" data-toggle="tooltip" data-placement="top"
+                            title="星球ID"></span>&nbsp;<a target="_blank" data-toggle="tooltip" data-placement="top"
+                            title="前往WIKI" id="wikiLink_planet" capitalid="" class="btn-nano d-none link-red"><i
+                                class="fa-solid fa-link"></i></a>&nbsp;&nbsp;<i class="fa-solid fa-maximize"
+                            data-toggle="tooltip" data-placement="top" title="星域面积"></i>&nbsp;<span
+                            id="constellationArea">&nbsp;</span>&nbsp;&nbsp;
+                        <i class="fa-regular fa-pen-to-square" data-toggle="tooltip" data-placement="top"
+                            title="编辑次数"></i>&nbsp;<span id="countEdited"></span></label>
+                    <div class="color-background-important" id="planet">
+                    </div>
+                </div>
+                <div class="star-raw-info d-flex flex-column color-font-default">
+                    <div class="mini-info d-none" id="hasRoute"><span><i class="fa-solid fa-code-commit"></i>&nbsp;有<a
+                                class="link-blue"
+                                href="https://wiki.whiteverse.com/index.php?title=%E6%98%9F%E9%97%A8">星路</a>连接:</span>
+                        <div class="star-route-viewer color-font-default color-info-bga mb-3">
+                            <ul class="list-group list-group-flush" id="routeList">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text btn-pend" id="shuffleImg" data-toggle="tooltip"
+                            data-placement="top" title="随机图片"><i class="fa-solid fa-shuffle"></i></span>
+                    </div>
+                    <input type="text" class="form-control" id="planet_img"></input>
+                    <div class="input-group-append">
+                        <span class="input-group-text">.png</span>
+                    </div>
+                </div>
+                <label class="sr-only" for="type">天体类别</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">天体类别</span>
+                    </div>
+                    <select class="custom-select" id="type">
+                    </select>
+                </div>
+                <div class="row d-felx flex-row mb-3">
+                    <div class="col-6">
+                        <label class="sr-only" for="coordX">X</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">X</span>
+                            </div>
+                            <input class="form-control" type="number" id="coordX">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <label class="sr-only" for="coordY">Y</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Y</span>
+                            </div>
+                            <input class="form-control" type="number" id="coordY">
+                        </div>
+                    </div>
+                </div>
+                <label class="sr-only" for="name_cn">名字</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">名称&nbsp;&nbsp;</span>
+                    </div>
+                    <input type="text" class="form-control" id="name_cn"></input>
+                </div>
+                <label class="sr-only" for="name_tn">名稱</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">名稱&nbsp;&nbsp;</span>
+                    </div>
+                    <input type="text" class="form-control" id="name_tn"></input>
+                </div>
+                <label class="sr-only" for="name_en">Name</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Name</span>
+                    </div>
+                    <input type="text" class="form-control" id="name_en"></input>
+                </div>
+                <label class="sr-only" for="faction">所属阵营</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">阵营&nbsp;&nbsp;<a target="_blank" data-toggle="tooltip"
+                                data-placement="top" title="前往WIKI" id="wikiLink_faction" capitalid=""
+                                class="link-green btn-nano d-none"><i class="fa-solid fa-link"></i></a></span>
+                    </div>
+                    <select class="custom-select" id="faction">
+                    </select>
+                </div>
+                <label class="sr-only" for="region" class="mt-2">所属星区</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">星区&nbsp;&nbsp;</span>
+                    </div>
+                    <select class="custom-select" id="region">
+                    </select>
+                </div>
+                <label class="sr-only" for="capital">星区首府</label>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">首府&nbsp;&nbsp;<a data-toggle="tooltip" data-placement="right"
+                                title="定位" id="locateThis" capitalid="" class="btn-starmap btn-mini d-none"><i
+                                    class="fa-solid fa-location-crosshairs"></i></a></span>
+                    </div>
+                    <input type="text" class="form-control" id="capital">
+                </div>
+                <div class="accordion mb-3" id="infoPanelAccordion">
+                    <div class="card card-info">
+                        <div class="card-header" id="headingOne">
+                            <button class="btn btn-block btn-outline-light btn-accordion btn-sm color-font-default"
+                                type="button" data-toggle="collapse" data-target="#descriptionContainer"
+                                aria-expanded="false" aria-controls="descriptionContainer">
+                                <i class="fa-solid fa-circle-info"></i>&nbsp;描述&nbsp;<i
+                                    class="fa-solid fa-caret-down"></i></button>
+                        </div>
+                        <div class="collapse mt-3" id="descriptionContainer" aria-labelledby="headingOne"
+                            data-parent="#infoPanelAccordion">
+                            <label class="sr-only" for="desc_cn" class="mt-2">简体</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">简体</span>
+                                </div>
+                                <input type="text" class="form-control" id="desc_cn"></input>
+                            </div>
+                            <label class="sr-only" for="desc_tn">繁體</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">繁體</span>
+                                </div>
+                                <input type="text" class="form-control" id="desc_tn"></input>
+                            </div>
+                            <label class="sr-only" for="desc_en">English</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">English</span>
+                                </div>
+                                <input type="text" class="form-control" id="desc_en"></input>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="sr-only" for="buff">BUFF:&nbsp;<span id="buffIdDisplay"></span></label>
+                <div class="input-group mb-1">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">BUFF</span>
+                    </div>
+                    <select class="custom-select" id="buff">
+                    </select>
+                    <div class="input-group-append">
+                        <span class="input-group-text btn-pend" id="addBuff"><i
+                                class="fa-solid fa-circle-plus"></i>&nbsp;添加</span>
+                    </div>
+                    <input type="text" class="d-none" id="buffRecord" value=0></input>
+                </div>
+                <div class="mb-3" id="buffArea">&nbsp;</div>
+
+                <button type="button" class="btn btn-block btn-secondary btn-submit d-none" id="submitChange"
+                    data-toggle="tooltip" data-placement="bottom" title="请仔细检查内容" disabled><i
+                        class="fa-solid fa-cloud-arrow-up"></i>&nbsp;提交修改</button>
+                <div class="d-none editedInfo"><i class="fa-regular fa-circle-check"></i></div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row m-3">
+        <canvas class="shadow" id="canvas">欸怎么会这样，换个浏览器吧
+        </canvas>
+    </div>
+    <div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="summaryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content blur modal-content-starmap color-font-default">
+                <div class="modal-body d-flex flex-column justify-content-center">
+                    <div class="modal-head-logo color-font-default"><i class="fa-solid fa-chart-column"></i></div>
+                    <div class="row">
+                        <div class="col-2 summary-amount">
+                            <div class="mb-3"><i class="fa-solid fa-globe"></i>&nbsp;星球&nbsp;&nbsp;<span
+                                    id="starAmount"></span></div>
+                            <div class="mb-3 chart-label" id="chartRegion"><i
+                                    class="fa-solid fa-border-top-left"></i>&nbsp;星区&nbsp;&nbsp;<span
+                                    id="regionAmount"></span>
+                            </div>
+                            <div class="mb-3 chart-label" id="chartRoute"><i
+                                    class="fa-solid fa-vector-square"></i>&nbsp;星路&nbsp;&nbsp;<span
+                                    id="routeAmount"></span>
+                            </div>
+                            <div class="mb-3"><span class="chart-label" id="chartStrandingZone"><i
+                                        class="fa-solid fa-ban"></i>&nbsp;禁滞区&nbsp;&nbsp;<span
+                                        id="strandingZoneAmount"></span></span>&nbsp;<a target="_blank"
+                                    data-toggle="tooltip" data-placement="right" title="什么是禁滞区？"
+                                    id="wikiLink_strandingZone" capitalid="" class="link-blue"><i
+                                        class="fa-solid fa-link"></i></a>
+                            </div>
+                            <div class="mb-3 chart-label" id="chartEdited"><i
+                                    class="fa-solid fa-pencil"></i>&nbsp;编辑&nbsp;&nbsp;<span id="editedAmount"></span>
+                            </div>
+                            <div class="mb-3 chart-label" id="chartLackImg"><i
+                                    class="fa-solid fa-images"></i>&nbsp;未使用&nbsp;&nbsp;<span
+                                    id="unusedImageAmount"></span>
+                            </div>
+                            <div class="mb-3"><i class="fa-solid fa-circle-question"></i>&nbsp;无图片&nbsp;&nbsp;<span
+                                    id="lackImgAmount"></span>
+                            </div>
+                            <div class="mb-3 chart-label"><i class="fa-solid fa-tag"></i>&nbsp;出售中&nbsp;&nbsp;<span
+                                    id="onsaleAmount"></span>
+                            </div>
+                            <button type="button" class="btn btn-block btn-starmap mb-3"
+                                id="chartBtnTypes">星球类型表</button>
+                            <button type="button" class="btn btn-block btn-starmap-reverse mb-3"
+                                id="chartBtnAreas">阵营影响力表</button>
+                            <label for=""><i class="fa-solid fa-layer-group"></i>&nbsp;选区叠加&nbsp;</label>
+                            <div class="toggle mb-2">
+                                <span class="color-font-secondary">关闭</span><input type="checkbox" class="toggle-switch"
+                                    id="chartOverlay"><span class="color-font-secondary">开启</span>
+                            </div>
+                        </div>
+                        <div class="col-10 summary-chart d-flex flex-column">
+                            <div id="chartContainer"><canvas id="summaryChart"></canvas></div>
+                        </div>
+                    </div>
+
+                    <div class="small text-center color-font-secondary text-center">
+                        <div><span class="version">Whiteverse: Explorer 0.6 beta</span></div>
+                        <div>&copy;developed by lunch, all rights reserved</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="settings" tabindex="-1" aria-labelledby="settingsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content blur modal-content-starmap color-font-default">
+                <div class="modal-body d-flex flex-column justify-content-center">
+                    <div class="close-this-modal d-flex justify-content-start text-left w-100"><i data-dismiss="modal"
+                            aria-label="Close" class="fa-solid fa-chevron-left"></i></div>
+                    <div class="modal-head-logo color-font-default"><i class="fa-solid fa-gear"></i></div>
+                    <div class="mobile-disable-mask d-flex flex-column justify-content-center">
+                        <label for="scaleRange"><i class="fa-solid fa-magnifying-glass-plus"></i>&nbsp;地图大小</label>
+                        <div class="form-inline justify-content-around flex-nowrap mb-3">
+                            <input type="range" class="form-control-range shadow" id="scaleRange" min="10" max="60"
+                                value>
+                            <button class="ml-2 btn btn-starmap" id="changeScale"><i
+                                    class="fa-solid fa-expand"></i></button>
+                        </div>
+                        <label for=""><i class="fa-solid fa-location-dot"></i>&nbsp;实时信息</label>
+                        <div class="toggle mb-3">
+                            <span class="color-font-secondary">隐藏</span><input type="checkbox" class="toggle-switch"
+                                id="showMeta"><span class="color-font-secondary">显示</span>
+                        </div>
+                        <label for=""><i class="fa-solid fa-location-dot"></i>&nbsp;定位线样式</label>
+                        <div class="toggle mb-3">
+                            <span class="color-font-secondary">十字</span><input type="checkbox" class="toggle-switch"
+                                id="locateStyle"><span class="color-font-secondary">方格</span>
+                        </div>
+                        <label for=""><i class="fa-solid fa-layer-group"></i>&nbsp;叠色渲染</label>
+                        <div class="toggle mb-2">
+                            <span class="color-font-secondary">关闭</span><input type="checkbox" class="toggle-switch"
+                                id="overlay"><span class="color-font-secondary">开启</span>
+                        </div>
+                        <div class="small color-font-secondary">
+                            <p>切换星区等绘图层时是否在原图基础上进行叠色绘制。<br>若开启叠色渲染，多点几遍颜色会更亮。</p>
+                        </div>
+                    </div>
+                    <label><i class="fa-solid fa-palette"></i>&nbsp;颜色主题</label>
+                    <div class="d-flex flex-row justify-content-center mb-3">
+                        <div class="mr-3">
+                            <input type="radio" id="themeRadio_violet" theme="violet" name="themeRadio"
+                                class="radio-theme">
+                            <label for="themeRadio_violet"><span></span><small>银河</small></label>
+                        </div>
+                        <div class="mr-3">
+                            <input type="radio" id="themeRadio_light" theme="light" name="themeRadio"
+                                class="radio-theme">
+                            <label for="themeRadio_light"><span></span><small>纯白</small></label>
+                        </div>
+                        <div>
+                            <input type="radio" id="themeRadio_arctic" theme="arctic" name="themeRadio"
+                                class="radio-theme">
+                            <label for="themeRadio_arctic"><span></span><small>极光</small>&nbsp;<a target="_blank"
+                                    data-toggle="tooltip" data-placement="bottom" title="漫步白宙x极光工业" id="wikiLink_aroura"
+                                    capitalid="" class="link-blue"><i class="fa-solid fa-link"></i></a></label>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-block btn-starmap-reverse mt-1 mr-1" id="whatever"
+                        title="无所谓"><i class="fa-regular fa-face-angry"></i>&nbsp;无所谓，我是桌面端</button>
+                    <label><i class="fa-solid fa-otter"></i>&nbsp;其他</label>
+                    <div class="d-flex flex-row justify-content-center mb-3">
+                        <button type="button" class="btn btn-block btn-starmap-reverse mt-1 mr-1" id="about"
+                            title="关于"><i class="fa-solid fa-circle-info"></i>&nbsp;关于</button>
+                    </div>
+                    <div class="small text-center color-font-secondary text-center">
+                        <div><span class="version">Whiteverse: Explorer 0.6 beta</span></div>
+                        <div>&copy;developed by lunch, all rights reserved</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="userLogin" tabindex="-1" aria-labelledby="userLoginLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content blur modal-content-starmap color-font-default">
+                <div class="modal-body d-flex flex-column justify-content-center">
+                    <div class="close-this-modal d-flex justify-content-start text-left w-100"><i data-dismiss="modal"
+                            aria-label="Close" class="fa-solid fa-chevron-left"></i></div>
+                    <div class="modal-head-logo color-font-default"><i class="fa-regular fa-circle-user"></i></div>
+                    <div class="d-none" id="userLogged">
+                        <div class="user-text text-center"></div>
+                        <button type="button" class="mt-4 btn btn-starmap-reverse" id="logoutBtnConfirm">
+                            <i class="fa-solid fa-right-from-bracket"></i>&nbsp;登出
+                        </button>
+                    </div>
+                    <div class="" id="userLoginInputs">
+                        <div class="user-text text-center"></div>
+                        <form role="form">
+                            <div class="form-group text-left">
+                                <label class="indexModalText" for="userNameInput">
+                                    <i class="fa-solid fa-user"></i>&nbsp;name</label>
+                                <input type="text" class="form-control indexModalInput" id="userNameInput"
+                                    name="userName" />
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="indexModalText" for="userPasswordInput"><i class="fa-solid fa-key"></i>
+                                    password</label>
+                                <input type="password" class="form-control indexModalInput" id="userPasswordInput"
+                                    name="userPassword" />
+                                <small id="passwordDescription" class="indexModalText form-text text-left"><i
+                                        class="fa-solid fa-hand"></i>
+                                    hey,enjoy the site.</small>
+                            </div>
+                            <div class="form-group form-check text-left">
+                                <input type="checkbox" class="form-check-input" id="checkMe" />
+                                <label class="indexModalText form-check-label" for="checkMe">记住我</label>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="button" class="btn  btn-starmap" id="joinWiKi">
+                                    <i class="fa-solid fa-user-plus"></i>&nbsp;加入whiteverse
+                                </button>
+                                <button type="button" class="ml-2 btn btn-starmap-reverse" id="loginBtnConfirm">
+                                    <i class="fa-solid fa-right-to-bracket"></i>&nbsp;登入
+                                </button>
+                            </div>
+                    </div>
+                    <div class="small text-center color-font-secondary text-center mt-3">
+                        <div><span class="version">Whiteverse: Explorer 0.6 beta</span></div>
+                        <div>&copy;developed by lunch, all rights reserved</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content blur modal-content-starmap color-font-default">
+                <div class="modal-body d-flex flex-column justify-content-center">
+                    <div class="modal-head-logo color-font-default"><i class="fa-regular fa-bell"></i></div>
+                    <div class="alert-text"></div>
+                    <div class="small text-center color-font-secondary text-center mt-3">
+                        <div><span class="version">Whiteverse: Explorer 0.6 beta</span></div>
+                        <div>&copy;developed by lunch, all rights reserved</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade blur" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content blur modal-content-starmap color-font-default">
+                <div class="modal-body d-flex flex-column justify-content-center">
+                    <div class="d-flex flex-row align-items-center">
+                        <div class="modal-head-logo color-font-default titleLogoContainer">
+                        </div>
+                        <div class="d-flex flex-column align-items-start ml-3">
+                            <h2>漫步<br>白宙</h2>
+                            <div><span class="version"></span></div>
+
+                        </div>
+                    </div>
+                    <div class="mt-3 about-text">
+                        欢迎来到漫步白宙在线星图浏览器。
+                    </div>
+                    <div class="about-text">
+                        你可以在这里实时查询游戏<a class="link-blue" target="_blank"
+                            href="https://store.steampowered.com/app/1126760/Whiteverse_No_Country_for_Old_Men/">《白宙：老无所依》</a>中的星图、星区、阵营、星路等各种信息。这里出现的所有星球都与<a
+                            target="_blank" data-toggle="tooltip" data-placement="right" title="前往WIKI"
+                            class="link-blue" href="https://wiki.whiteverse.com">知识库<i
+                                class="fa-solid fa-link"></i></a>链接，允许你轻松地查询或撰写更多有关该星球的内容。
+                    </div>
+                    <div class="about-text"><b>这是仅保留速查功能的移动版。</b></div>
+                    <div class="toggle mt-3">
+                        <span class="color-font-secondary"></span><input type="checkbox" class="toggle-switch"
+                            id="neverWelcome"><span class="color-font-secondary"><small>不再提示，你也可以在<a class="link-blue"
+                                    id="openSettings">设置</a>中找到本界面。</small></span>
+                    </div>
+                    <button type="button" data-dismiss="modal" class="btn btn-block btn-starmap-reverse mt-3">
+                        <i class="fa-solid fa-person-walking"></i>&nbsp;进入
+                    </button>
+                    <div class="mt-3 small color-font-secondary text-center">
+                        <i class="fa-solid fa-cookie-bite"></i>&nbsp;需要读写cookies以保存用户一周内设置。<br>任何建议或申请进阶功能请向<a
+                            href="mailto:Lunch@whiteverse.com"><i
+                                class="fa-solid fa-envelope"></i>Lunch@whiteverse.com</a>发送邮件。<br>
+                        本程序中出现的UI，源码，星球等内容著作权属于白宙。
+                        <br>&copy;developed by lunch, all rights reserved
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade blur" id="logModal" tabindex="-1" aria-labelledby="logModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content blur modal-content-starmap color-font-default p-2">
+                <div class="modal-header">
+                    <div class="close-this-modal d-flex justify-content-start text-left w-100"><i data-dismiss="modal"
+                            aria-label="Close" class="fa-solid fa-chevron-left"></i></div>
+                    <div class="modal-head-logo color-font-default"><i class="fa-brands fa-dev"></i></div>
+                </div>
+                <div class="modal-body log-modal-content m-1">
+
+                </div>
+                <div class="modal-footer small text-center color-font-secondary text-center">
+                    <div><span class="version">Whiteverse: Explorer 0.6 beta</span></div>
+                    <div>&copy;developed by lunch, all rights reserved</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.6.1/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-voronoi@1.1.4/dist/d3-voronoi.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="scripts/explorer/main.js"></script>
+<script src="scripts/explorer/control.js"></script>
+<!--                                                
+ ___       ___  ___  ________   ________  ___  ___     
+|\  \     |\  \|\  \|\   ___  \|\   ____\|\  \|\  \    
+\ \  \    \ \  \\\  \ \  \\ \  \ \  \___|\ \  \\\  \   
+ \ \  \    \ \  \\\  \ \  \\ \  \ \  \    \ \   __  \  
+  \ \  \____\ \  \\\  \ \  \\ \  \ \  \____\ \  \ \  \ 
+   \ \_______\ \_______\ \__\\ \__\ \_______\ \__\ \__\
+    \|_______|\|_______|\|__| \|__|\|_______|\|__|\|__|
+
+                                                     -->
+
+</html>
