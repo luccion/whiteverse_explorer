@@ -7,7 +7,7 @@
    \ \_______\ \_______\ \__\\ \__\ \_______\ \__\ \__\
     \|_______|\|_______|\|__| \|__|\|_______|\|__|\|__|
                                                         */
-const VERSION = 'Whiteverse: Explorer 1.3.1',
+const VERSION = 'Whiteverse: Explorer 1.3.3',
   CANVAS = document.getElementById('starmap'),
   CTX = CANVAS.getContext('2d'),
   CANVAS_STARS = document.getElementById('starmap_stars'),

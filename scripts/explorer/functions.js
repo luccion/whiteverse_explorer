@@ -41,7 +41,6 @@ function processGotMessage() {
     }
   }
   if (wikiPlanet === undefined && factionView !== undefined) {
-    console.log(factionView);
     vFaction(1);
   }
 }
@@ -186,6 +185,8 @@ async function initialize() {
         });
       })();
       summary(); //after ajax for unused Image Amount
+    } else {
+      $('.starmap-canvas-container').remove();
     }
     resolve();
   });

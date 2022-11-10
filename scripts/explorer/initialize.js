@@ -14,7 +14,6 @@ const $_GET = (() => {
   url = window.document.location.href.toString();
   let u = url.split('?');
   http_page = u[0];
-  http_parms += u[1];
   if (typeof u[1] == 'string') {
     u = u[1].split('&');
     let get = {};
@@ -34,7 +33,7 @@ if (!override) {
       var urlhash = window.location.hash;
       if (!urlhash.match('fromapp')) {
         if (navigator.userAgent.match(/(iPhone|iPod|Android)/i)) {
-          window.location = 'https://whiteverse.com/explorer_mobile.html' + http_parms;
+          window.location = 'https://whiteverse.com/explorer_mobile.html' + http_parms == '?undefined' ? '' : http_parms;
         }
       }
     } catch (err) {}
