@@ -16,3 +16,11 @@ define('BUFFS', 'wv_celescial_buff');
 define('FACTIONS', 'wv_faction');
 define('REGIONS', 'wv_region');
 define('ROUTES', 'wv_celescial_route');
+function write($content)
+{
+    $content = date("Y-m-d H:i:s") . "  " . $content . "\r\n";
+    $log = '../../log/explorer.log';
+    $file = fopen($log, 'a+');
+    fputs($file, $content);
+    fclose($file);
+}

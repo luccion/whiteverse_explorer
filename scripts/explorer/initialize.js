@@ -9,11 +9,13 @@
                                                         */
 let { mobile, override } = false;
 let http_page = '';
-let http_parms = '?';
+let http_parms = '';
 const $_GET = (() => {
   url = window.document.location.href.toString();
   let u = url.split('?');
   http_page = u[0];
+  let http_parms = url.replace(http_page, '');
+  http_parms = http_parms == '?undefined' ? '' : http_parms;
   if (typeof u[1] == 'string') {
     u = u[1].split('&');
     let get = {};
@@ -26,6 +28,7 @@ const $_GET = (() => {
     return {};
   }
 })();
+
 override = JSON.parse($_GET['override'] || false);
 if (!override) {
   if (http_page != 'https://whiteverse.com/explorer_mobile.html') {
@@ -33,7 +36,7 @@ if (!override) {
       var urlhash = window.location.hash;
       if (!urlhash.match('fromapp')) {
         if (navigator.userAgent.match(/(iPhone|iPod|Android)/i)) {
-          window.location = 'https://whiteverse.com/explorer_mobile.html' + http_parms == '?undefined' ? '' : http_parms;
+          window.location = 'https://whiteverse.com/explorer_mobile.html' + http_parms;
         }
       }
     } catch (err) {}

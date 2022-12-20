@@ -461,11 +461,24 @@ $(function () {
   $('#log').click(() => {
     $('#settings').modal('hide');
     $.get(PATH_LOG, (data) => {
-      console.log(data);
       $('.log-modal-content').html(marked.parse(data));
     });
     $('#logModal').modal('show');
   });
+  $('#logModal').on('hidden.bs.modal', () => {
+    $('#settings').modal('show');
+  });
+  $('#editlogBtn').click(() => {
+    $('#summaryModal').modal('hide');
+    $.get(PATH_EDITLOG, (data) => {
+      $('.editlog-modal-content').html(processGotEditlog(data));
+    });
+    $('#editlogModal').modal('show');
+  });
+  $('#editlogModal').on('hidden.bs.modal', () => {
+    $('#summaryModal').modal('show');
+  });
+
   $('#feedback').click(() => {
     window.location.href = PATH_FEEDBACK;
   });

@@ -21,7 +21,7 @@ let { STARDATA, STARS, TYPES, BUFFS, FACTIONS, REGIONS, ROUTES } = [],
   CANVASSTARCOLOR = COLOR_STAR_DEFAULT,
   LOGO = PATH_LOGO_DEFAULT;
 
-function processGotMessage() {
+function processGotMessage(ifpc = 1) {
   const wikiPlanet = decodeURI($_GET['planet']),
     factionView = $_GET['faction'];
   if (wikiPlanet !== undefined) {
@@ -31,18 +31,28 @@ function processGotMessage() {
       }
     });
     if (star) {
-      if (factionView !== undefined) {
-        vFaction(1);
+      if (ifpc) {
+        if (factionView !== undefined) {
+          vFaction(1);
+        }
+        locate(star.x * C, star.y * C, 0);
+        $('#infoPanel').removeClass('d-none');
+        $('#showInfoPanel').addClass('btn-secondary').removeClass('btn-starmap').prop('disabled', true);
       }
-      locate(star.x * C, star.y * C, 0);
       setInfo(star);
-      $('#infoPanel').removeClass('d-none');
-      $('#showInfoPanel').addClass('btn-secondary').removeClass('btn-starmap').prop('disabled', true);
     }
   }
   if (wikiPlanet === undefined && factionView !== undefined) {
     vFaction(1);
   }
+}
+function processGotEditlog(editlog) {
+  editlog = editlog
+    .replace(/([0-9]{4}\-[0-1][0-9]\-[0-3][0-9]\ [0-2][0-9]\:[0-5][0-9]\:[0-5][0-9]$)/, '<span class="edited-time">$1</span>')
+    .replace('edited', '<i class="fa-solid fa-pen"></i>')
+    .replace('route added', '<i class="fa-solid fa-code-commit"></i>')
+    .replace(/({.*})/, '<span class="edited-content">$1</span>');
+  return editlog;
 }
 function ajax() {
   return new Promise((resolve) => {
@@ -187,6 +197,10 @@ async function initialize() {
       summary(); //after ajax for unused Image Amount
     } else {
       $('.starmap-canvas-container').remove();
+      if (!$_GET['planet']) {
+        $('#shuffle').trigger('click');
+      }
+      processGotMessage(0);
     }
     resolve();
   });
@@ -360,13 +374,18 @@ function submitChange() {
       faction: faction,
     },
     success: (data) => {
-      if (data == 'success') {
-        let countEdited = parseInt($('#countEdited').html()) + 1;
-        STARS[id].edited = parseInt(STARS[id].edited) + 1;
-        $('#countEdited').html(countEdited);
-        $('#submitChange').next().html('<i class="fa-regular fa-circle-check"></i>').removeClass('d-none');
-      } else {
-        $('#submitChange').next().html('<i class="fa-regular fa-circle-xmark"></i>').removeClass('d-none');
+      switch (data) {
+        case 'success':
+          let countEdited = parseInt($('#countEdited').html()) + 1;
+          STARS[id].edited = parseInt(STARS[id].edited) + 1;
+          $('#countEdited').html(countEdited);
+          $('#submitChange').next().html('<i class="fa-regular fa-circle-check"></i>').removeClass('d-none');
+          break;
+        case 'nochange':
+          $('#submitChange').next().html('<i class="fa-regular fa-circle"></i>').removeClass('d-none');
+          break;
+        default:
+          $('#submitChange').next().html('<i class="fa-regular fa-circle-xmark"></i>').removeClass('d-none');
       }
     },
   });
